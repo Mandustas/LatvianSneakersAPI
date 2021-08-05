@@ -23,8 +23,10 @@ namespace DataLayer.Repositories
         public IEnumerable<Product> Get(IEnumerable<Size> sizes, int? BrandId = null, int? ModelId = null, bool? isNew = null, bool? PriceOrder = null)
         {
             var products = _latvianSneakersContext.Products
-                .Include(u => u.Sizes)
-                .ToList();
+               .Include(u => u.Sizes)
+               .Include(i => i.Images)
+               .Include(b => b.Brand)
+               .ToList();
 
             if (BrandId != null)
             {

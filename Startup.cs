@@ -40,6 +40,9 @@ namespace LatvianSneakers
             });
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped<ISizeRepository, SizeRepository>();
+            services.AddScoped<IBrandRepository, BrandRepository>();
+            services.AddScoped<IBannerRepository, BannerRepository>();
+            services.AddScoped<IModelRepository, ModelRepository>();
 
         }
 

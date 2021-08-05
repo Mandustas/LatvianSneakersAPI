@@ -45,6 +45,12 @@ namespace LatvianSneakers.Controllers
                     size.Products = null;
                     size.ProductSizes = null;
                 }
+                foreach (var image in product.Images)
+                {
+                    image.Product = null;
+                }
+                product.Brand.Models = null;
+                product.Brand.Products = null;
                 product.ProductSizes = null;
             }
 

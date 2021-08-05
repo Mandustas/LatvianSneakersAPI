@@ -8,11 +8,11 @@ using System.Text;
 
 namespace DataLayer.Repositories
 {
-    public class BrandRepository : IBrandRepository
+    public class ModelRepository : IModelRepository
     {
         private readonly LatvianSneakersContext _latvianSneakersContext;
 
-        public BrandRepository(LatvianSneakersContext latvianSneakersContext)
+        public ModelRepository(LatvianSneakersContext latvianSneakersContext)
         {
             _latvianSneakersContext = latvianSneakersContext;
         }
@@ -20,40 +20,33 @@ namespace DataLayer.Repositories
         {
             return _latvianSneakersContext.SaveChanges() >= 0;
         }
-        public IEnumerable<Brand> Get()
+        public IEnumerable<Model> Get()
         {
-            var brands = _latvianSneakersContext.Brands
-                .Include(u => u.Models)
+            var models = _latvianSneakersContext.Models
                 .ToList();
-            foreach (var brand in brands)
-            {
-                foreach (var model in brand.Models)
-                {
-                    model.Brand = null;
-                }       
-            }
+            
 
-            return brands;
+            return models;
 
         }
-        public Brand GetById(int id)
+        public Model GetById(int id)
         {
-            var brands = _latvianSneakersContext.Brands
+            var model = _latvianSneakersContext.Models
                 .FirstOrDefault(p => p.Id == id);
-            return brands;
+            return model;
         }
-        public void Create(Brand brand)
+        public void Create(Model model)
         {
             throw new NotImplementedException();
         }
 
 
-        public void Delete(Brand brand)
+        public void Delete(Model model)
         {
             throw new NotImplementedException();
         }
 
-        public void Update(Brand brand)
+        public void Update(Model model)
         {
             throw new NotImplementedException();
         }
