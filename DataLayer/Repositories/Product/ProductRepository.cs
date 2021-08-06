@@ -20,14 +20,18 @@ namespace DataLayer.Repositories
         {
             return _latvianSneakersContext.SaveChanges() >= 0;
         }
-        public IEnumerable<Product> Get(IEnumerable<Size> sizes, int? BrandId = null, int? ModelId = null, bool? isNew = null, bool? PriceOrder = null)
+        public IEnumerable<Product> Get(IEnumerable<Size> sizes, int? BrandId = null, int? ModelId = null, int? Id = null)
         {
             var products = _latvianSneakersContext.Products
                .Include(u => u.Sizes)
                .Include(i => i.Images)
                .Include(b => b.Brand)
+               .Include(m => m.Model)
                .ToList();
-
+            if (Id != null)
+            {
+                products = products.Where(i => i.Id == Id).ToList();
+            }
             if (BrandId != null)
             {
                 products = products.Where(b => b.BrandId == BrandId).ToList();
@@ -53,22 +57,7 @@ namespace DataLayer.Repositories
                 }
                 products = products.Where(s => s.Sizes.Count() != 0).ToList();
             }
-            if (isNew != null)
-            {
-                products = products.OrderBy(p => p.DateCreate).ToList();
-            }
-            if (PriceOrder != null)
-            {
-                if (PriceOrder == true)
-                {
-                    products = products.OrderBy(p => p.Price).ToList();
-                }
-                else
-                {
-                    products = products.OrderByDescending(p => p.Price).ToList();
-                }
-
-            }
+            
 
             return products;
 
@@ -77,6 +66,18 @@ namespace DataLayer.Repositories
         public Product GetById(int id)
         {
             var product = _latvianSneakersContext.Products
+                .FirstOrDefault(p => p.Id == id);
+            if (product != null)
+            {
+                return product;
+            }
+            return null;
+        }
+        public Product GetWithSizesAndImagesById(int id)
+        {
+            var product = _latvianSneakersContext.Products
+                .Include(i => i.Images)
+                .Include(s => s.ProductSizes)
                 .FirstOrDefault(p => p.Id == id);
             if (product != null)
             {
@@ -98,15 +99,23 @@ namespace DataLayer.Repositories
         }
         public void Create(Product product)
         {
-            throw new NotImplementedException();
+            if (product == null)
+            {
+                throw new ArgumentNullException(nameof(product));
+            }
+            _latvianSneakersContext.Add(product);
         }
         public void Update(Product product)
         {
-            throw new NotImplementedException();
+
         }
         public void Delete(Product product)
         {
-            throw new NotImplementedException();
+            if (product == null)
+            {
+                throw new ArgumentNullException(nameof(product));
+            }
+            _latvianSneakersContext.Remove(product);
         }
 
     }

@@ -34,20 +34,35 @@ namespace DataLayer.Repositories
                 .FirstOrDefault(p => p.Id == id);
             return order;
         }
+        public Order GetWithImgsById(int id)
+        {
+            var order = _latvianSneakersContext.Orders
+                .Include(i => i.Images)
+                .FirstOrDefault(p => p.Id == id);
+            return order;
+        }
         public void Create(Order order)
         {
-            throw new NotImplementedException();
+            if (order == null)
+            {
+                throw new ArgumentNullException(nameof(order));
+            }
+            _latvianSneakersContext.Add(order);
         }
 
 
         public void Delete(Order order)
         {
-            throw new NotImplementedException();
+            if (order == null)
+            {
+                throw new ArgumentNullException(nameof(order));
+            }
+            _latvianSneakersContext.Remove(order);
         }
 
         public void Update(Order order)
         {
-            throw new NotImplementedException();
+
         }
     }
 }

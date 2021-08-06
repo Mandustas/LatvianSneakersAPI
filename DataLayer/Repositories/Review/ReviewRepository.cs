@@ -35,18 +35,26 @@ namespace DataLayer.Repositories
         }
         public void Create(Review review)
         {
-            throw new NotImplementedException();
+            if (review == null)
+            {
+                throw new ArgumentNullException(nameof(review));
+            }
+            _latvianSneakersContext.Add(review);
         }
 
 
         public void Delete(Review review)
         {
-            throw new NotImplementedException();
+            if (review == null)
+            {
+                throw new ArgumentNullException(nameof(review));
+            }
+            _latvianSneakersContext.Remove(review);
         }
 
         public void Update(Review review)
         {
-            throw new NotImplementedException();
+
         }
     }
 }

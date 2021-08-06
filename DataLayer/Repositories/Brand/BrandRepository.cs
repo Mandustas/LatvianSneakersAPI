@@ -44,18 +44,25 @@ namespace DataLayer.Repositories
         }
         public void Create(Brand brand)
         {
-            throw new NotImplementedException();
+            if (brand == null)
+            {
+                throw new ArgumentNullException(nameof(brand));
+            }
+            _latvianSneakersContext.Add(brand);
         }
 
 
         public void Delete(Brand brand)
         {
-            throw new NotImplementedException();
+            if (brand == null)
+            {
+                throw new ArgumentNullException(nameof(brand));
+            }
+            _latvianSneakersContext.Remove(brand);
         }
 
         public void Update(Brand brand)
         {
-            throw new NotImplementedException();
         }
     }
 }

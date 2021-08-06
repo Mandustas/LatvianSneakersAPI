@@ -1,4 +1,5 @@
-﻿using DataLayer.Models;
+﻿using DataLayer.DTOs;
+using DataLayer.Models;
 using DataLayer.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -28,7 +29,7 @@ namespace LatvianSneakers.Controllers
 
         // GET: api/<ProductController>
         [HttpGet]
-        public ActionResult<IEnumerable<Product>> Get([FromQuery] int[] sizes, int? BrandId = null, int? ModelId = null, bool? isNew = null, bool? PriceOrder = null)
+        public ActionResult<IEnumerable<Product>> Get([FromQuery] int[] sizes, int? BrandId = null, int? ModelId = null, int? Id = null)
         {
             var validSizes = new List<Size>();
 
@@ -36,7 +37,7 @@ namespace LatvianSneakers.Controllers
             {
                 validSizes.Add(_sizeRepository.GetById(size));
             }
-            var products = _productRepository.Get(validSizes, BrandId, ModelId, isNew, PriceOrder).ToList();
+            var products = _productRepository.Get(validSizes, BrandId, ModelId, Id).ToList();
 
             foreach (var product in products)
             {
@@ -51,6 +52,8 @@ namespace LatvianSneakers.Controllers
                 }
                 product.Brand.Models = null;
                 product.Brand.Products = null;
+                product.Model.Products = null;
+                product.Model.Brand = null;
                 product.ProductSizes = null;
             }
 
@@ -69,22 +72,111 @@ namespace LatvianSneakers.Controllers
             return NotFound();
         }
 
-        // POST api/<ProductController>
+        //[Authorize(Roles = "Координатор ПСР")]
         [HttpPost]
-        public void Post([FromBody] string value)
+        public ActionResult<ProductCreateDTO> Create(ProductCreateDTO productCreateDTO)
         {
+            Product product = new Product();
+            List<Image> imgs = new List<Image>();
+            List<ProductSize> productSizes = new List<ProductSize>();
+
+            foreach (var img in productCreateDTO.Images)
+            {
+                imgs.Add(new Image
+                {
+                    Path = img
+                });
+            }
+
+            foreach (var size in productCreateDTO.Sizes)
+            {
+                productSizes.Add(new ProductSize
+                {
+                    SizeId = size
+                });
+            }
+
+            product.BrandId = productCreateDTO.BrandId;
+            product.DateCreate = DateTime.Now;
+            product.Discount = productCreateDTO.Discount;
+            product.IsNew = productCreateDTO.IsNew;
+            product.IsPopular = productCreateDTO.IsPopular;
+            product.IsSale = productCreateDTO.IsSale;
+            product.ModelId = productCreateDTO.ModelId;
+            product.Price = productCreateDTO.Price;
+            product.Title = productCreateDTO.Title;
+            product.Images = imgs;
+            product.ProductSizes = productSizes;
+
+            _productRepository.Create(product);
+            _productRepository.SaveChanges();
+
+
+            return NoContent();
         }
 
-        // PUT api/<ProductController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        //[Authorize(Roles = "Координатор ПСР")]
+
+        public ActionResult<Product> Update(int id, ProductCreateDTO productCreateDTO)
         {
+            var product = _productRepository.GetWithSizesAndImagesById(id);
+            if (product == null)
+            {
+                return NotFound();
+            }
+            product.Images = null;
+            product.ProductSizes = null;
+
+            List<Image> imgs = new List<Image>();
+            List<ProductSize> productSizes = new List<ProductSize>();
+
+            foreach (var img in productCreateDTO.Images)
+            {
+                imgs.Add(new Image
+                {
+                    Path = img
+                });
+            }
+
+            foreach (var size in productCreateDTO.Sizes)
+            {
+                productSizes.Add(new ProductSize
+                {
+                    SizeId = size
+                });
+            }
+
+            product.BrandId = productCreateDTO.BrandId;
+            product.Discount = productCreateDTO.Discount;
+            product.IsNew = productCreateDTO.IsNew;
+            product.IsPopular = productCreateDTO.IsPopular;
+            product.IsSale = productCreateDTO.IsSale;
+            product.ModelId = productCreateDTO.ModelId;
+            product.Price = productCreateDTO.Price;
+            product.Title = productCreateDTO.Title;
+            product.Images = imgs;
+            product.ProductSizes = productSizes;
+
+            _productRepository.Update(product); //Best practice
+            _productRepository.SaveChanges();
+
+            return NoContent();
         }
 
-        // DELETE api/<ProductController>/5
+        ////[Authorize(Roles = "Координатор ПСР")]
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public ActionResult Delete(int id)
         {
+            var product = _productRepository.GetWithSizesAndImagesById(id);
+            if (product == null)
+            {
+                return NotFound();
+            }
+
+            _productRepository.Delete(product);
+            _productRepository.SaveChanges();
+            return NoContent();
         }
     }
 }

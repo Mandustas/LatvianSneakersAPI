@@ -37,18 +37,25 @@ namespace DataLayer.Repositories
         }
         public void Create(Model model)
         {
-            throw new NotImplementedException();
+            if (model == null)
+            {
+                throw new ArgumentNullException(nameof(model));
+            }
+            _latvianSneakersContext.Add(model);
         }
 
 
         public void Delete(Model model)
         {
-            throw new NotImplementedException();
+            if (model == null)
+            {
+                throw new ArgumentNullException(nameof(model));
+            }
+            _latvianSneakersContext.Remove(model);
         }
 
         public void Update(Model model)
         {
-            throw new NotImplementedException();
         }
     }
 }

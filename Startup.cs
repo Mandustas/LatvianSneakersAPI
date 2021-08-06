@@ -43,6 +43,10 @@ namespace LatvianSneakers
             services.AddScoped<IBrandRepository, BrandRepository>();
             services.AddScoped<IBannerRepository, BannerRepository>();
             services.AddScoped<IModelRepository, ModelRepository>();
+            services.AddScoped<IReviewRepository, ReviewRepository>();
+            services.AddScoped<IOrderRepository, OrderRepository>();
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
 
         }
 

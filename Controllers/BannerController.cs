@@ -1,4 +1,6 @@
-﻿using DataLayer.Models;
+﻿using AutoMapper;
+using DataLayer.DTOs;
+using DataLayer.Models;
 using DataLayer.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -14,10 +16,16 @@ namespace LatvianSneakers.Controllers
     public class BannerController : ControllerBase
     {
         private readonly IBannerRepository _bannerRepository;
+        private readonly IMapper _mapper;
 
-        public BannerController(IBannerRepository bannerRepository)
+        public BannerController(
+            IBannerRepository bannerRepository,
+            IMapper mapper
+
+            )
         {
             _bannerRepository = bannerRepository;
+            _mapper = mapper;
         }
 
 
@@ -28,6 +36,64 @@ namespace LatvianSneakers.Controllers
             var banners = _bannerRepository.Get();
             banners = banners.OrderBy(o => o.Order);
             return Ok(banners);
+        }
+
+        [HttpGet("{id}", Name = "GetBannerById")]
+        public ActionResult<Banner> GetBannerById(int id)
+        {
+            var banner = _bannerRepository.GetById(id);
+            if (banner != null)
+            {
+                return Ok(banner);
+            }
+            return NotFound();
+        }
+
+        //[Authorize(Roles = "Координатор ПСР")]
+        [HttpPost]
+        public ActionResult<BannerCreateAndUpdateDTO> Create(BannerCreateAndUpdateDTO bannerCreateAndUpdateDTO)
+        {
+            var banner = _mapper.Map<Banner>(bannerCreateAndUpdateDTO);
+            _bannerRepository.Create(banner);
+            _bannerRepository.SaveChanges();
+
+            var bannerReadDto = _mapper.Map<Banner>(banner);
+
+
+            return CreatedAtRoute(nameof(GetBannerById), new { Id = bannerReadDto.Id }, bannerReadDto); //Return 201
+        }
+
+        [HttpPut("{id}")]
+        //[Authorize(Roles = "Координатор ПСР")]
+
+        public ActionResult<Banner> Update(int id, BannerCreateAndUpdateDTO bannerCreateAndUpdateDTO)
+        {
+            var banner = _bannerRepository.GetById(id);
+            if (banner == null)
+            {
+                return NotFound();
+            }
+
+            _mapper.Map(bannerCreateAndUpdateDTO, banner);
+            _bannerRepository.Update(banner); //Best practice
+            _bannerRepository.SaveChanges();
+
+            return NoContent();
+        }
+
+        //[Authorize(Roles = "Координатор ПСР")]
+        [HttpDelete("{id}")]
+        public ActionResult Delete(int id)
+        {
+            var banner = _bannerRepository.GetById(id);
+            if (banner == null)
+            {
+                return NotFound();
+            }
+
+            _bannerRepository.Delete(banner);
+            _bannerRepository.SaveChanges();
+            return NoContent();
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿using DataLayer.Models;
+﻿using AutoMapper;
+using DataLayer.DTOs;
+using DataLayer.Models;
 using DataLayer.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -15,10 +17,13 @@ namespace LatvianSneakers.Controllers
     public class BrandController : ControllerBase
     {
         private readonly IBrandRepository _brandRepository;
+        private readonly IMapper _mapper;
+        
 
-        public BrandController(IBrandRepository brandRepository)
+        public BrandController(IBrandRepository brandRepository, IMapper mapper)
         {
             _brandRepository = brandRepository;
+            _mapper = mapper;
         }
 
 
@@ -42,22 +47,52 @@ namespace LatvianSneakers.Controllers
             return NotFound();
         }
 
-        // POST api/<BrandController>
+        //[Authorize(Roles = "Координатор ПСР")]
         [HttpPost]
-        public void Post([FromBody] string value)
+        public ActionResult<BrandCreateDTO> Create(BrandCreateDTO brandCreateDTO)
         {
+            var brand = _mapper.Map<Brand>(brandCreateDTO);
+            _brandRepository.Create(brand);
+            _brandRepository.SaveChanges();
+
+            //var brandReadDto = _mapper.Map<Brand>(brand);
+
+            return NoContent();
+
+            //return CreatedAtRoute(nameof(Get), new { Id = brandReadDto.Id }, brandReadDto); //Return 201
         }
 
-        // PUT api/<BrandController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        //[Authorize(Roles = "Координатор ПСР")]
+
+        public ActionResult<Brand> Update(int id, BrandCreateDTO brandCreateDTO)
         {
+            var brand = _brandRepository.GetById(id);
+            if (brand == null)
+            {
+                return NotFound();
+            }
+
+            _mapper.Map(brandCreateDTO, brand);
+            _brandRepository.Update(brand); //Best practice
+            _brandRepository.SaveChanges();
+
+            return NoContent();
         }
 
-        // DELETE api/<BrandController>/5
+        //[Authorize(Roles = "Координатор ПСР")]
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public ActionResult Delete(int id)
         {
+            var brand = _brandRepository.GetById(id);
+            if (brand == null)
+            {
+                return NotFound();
+            }
+
+            _brandRepository.Delete(brand);
+            _brandRepository.SaveChanges();
+            return NoContent();
         }
     }
 }

@@ -35,18 +35,26 @@ namespace DataLayer.Repositories
         }
         public void Create(Banner banner)
         {
-            throw new NotImplementedException();
+            if (banner == null)
+            {
+                throw new ArgumentNullException(nameof(banner));
+            }
+            _latvianSneakersContext.Add(banner);
         }
 
 
         public void Delete(Banner banner)
         {
-            throw new NotImplementedException();
+            if (banner == null)
+            {
+                throw new ArgumentNullException(nameof(banner));
+            }
+            _latvianSneakersContext.Remove(banner);
         }
 
         public void Update(Banner banner)
         {
-            throw new NotImplementedException();
+            
         }
     }
 }
