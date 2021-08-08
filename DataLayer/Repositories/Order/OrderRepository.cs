@@ -20,11 +20,15 @@ namespace DataLayer.Repositories
         {
             return _latvianSneakersContext.SaveChanges() >= 0;
         }
-        public IEnumerable<Order> Get()
+        public IEnumerable<Order> Get(int? Id = null)
         {
             var orders = _latvianSneakersContext.Orders
                 .Include(i => i.Images)
                 .ToList();
+            if (Id != null)
+            {
+                orders = orders.Where(i => i.Id == Id).ToList();
+            }
             return orders;
 
         }

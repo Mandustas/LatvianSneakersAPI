@@ -1,5 +1,6 @@
 using DataLayer.Contexts;
 using DataLayer.Repositories;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -30,7 +31,25 @@ namespace LatvianSneakers
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddCors();
+            var authOptions = Configuration.GetSection("Auth").Get<AuthOptions.AuthOptions>();
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.RequireHttpsMetadata = false;
+                    options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidIssuer = authOptions.Issuer,
 
+                        ValidateAudience = true,
+                        ValidAudience = authOptions.Audience,
+
+                        ValidateLifetime = true,
+                        IssuerSigningKey = authOptions.GetSymmetricSecurityKey(), //HS256
+
+                        ValidateIssuerSigningKey = true,
+                    };
+                });
             services.AddDbContext<LatvianSneakersContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString("Default")));
 
             services.AddControllers();
@@ -71,6 +90,8 @@ namespace LatvianSneakers
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 

@@ -2,6 +2,7 @@
 using DataLayer.DTOs;
 using DataLayer.Models;
 using DataLayer.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -25,9 +26,9 @@ namespace LatvianSneakers.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<Order>> Get()
+        public ActionResult<IEnumerable<Order>> Get(int? Id = null)
         {
-            var orders = _orderRepository.Get();
+            var orders = _orderRepository.Get(Id);
             foreach (var order in orders)
             {
                 foreach (var img in order.Images)
@@ -50,6 +51,7 @@ namespace LatvianSneakers.Controllers
         }
 
         //[Authorize(Roles = "Координатор ПСР")]
+        [Authorize]
         [HttpPost]
         public ActionResult<OrderCreateDTO> Create(OrderCreateDTO orderCreateDTO)
         {
@@ -75,6 +77,7 @@ namespace LatvianSneakers.Controllers
             //return CreatedAtRoute(nameof(Get), new { Id = brandReadDto.Id }, brandReadDto); //Return 201
         }
 
+        [Authorize]
         [HttpPut("{id}")]
         ////[Authorize(Roles = "Координатор ПСР")]
 
@@ -105,6 +108,7 @@ namespace LatvianSneakers.Controllers
         }
 
         ////[Authorize(Roles = "Координатор ПСР")]
+        [Authorize]
         [HttpDelete("{id}")]
         public ActionResult Delete(int id)
         {

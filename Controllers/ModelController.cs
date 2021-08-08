@@ -2,6 +2,7 @@
 using DataLayer.DTOs;
 using DataLayer.Models;
 using DataLayer.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -28,9 +29,9 @@ namespace LatvianSneakers.Controllers
 
         // GET: api/<BrandController>
         [HttpGet]
-        public ActionResult<IEnumerable<Model>> Get()
+        public ActionResult<IEnumerable<Model>> Get(int? BrandId = null)
         {
-            var models = _modelRepository.Get();
+            var models = _modelRepository.Get(BrandId);
             return Ok(models);
         }
 
@@ -46,6 +47,7 @@ namespace LatvianSneakers.Controllers
             return NotFound();
         }
 
+        [Authorize]
         [HttpPost]
         public ActionResult<ModelCreateDTO> Create(ModelCreateDTO modelCreateDTO)
         {
@@ -60,6 +62,7 @@ namespace LatvianSneakers.Controllers
             //return CreatedAtRoute(nameof(Get), new { Id = brandReadDto.Id }, brandReadDto); //Return 201
         }
 
+        [Authorize]
         [HttpPut("{id}")]
         //[Authorize(Roles = "Координатор ПСР")]
 
@@ -79,6 +82,7 @@ namespace LatvianSneakers.Controllers
         }
 
         //[Authorize(Roles = "Координатор ПСР")]
+        [Authorize]
         [HttpDelete("{id}")]
         public ActionResult Delete(int id)
         {

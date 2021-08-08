@@ -2,6 +2,7 @@
 using DataLayer.DTOs;
 using DataLayer.Models;
 using DataLayer.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -49,7 +50,7 @@ namespace LatvianSneakers.Controllers
             return NotFound();
         }
 
-        //[Authorize(Roles = "Координатор ПСР")]
+        [Authorize]
         [HttpPost]
         public ActionResult<BannerCreateAndUpdateDTO> Create(BannerCreateAndUpdateDTO bannerCreateAndUpdateDTO)
         {
@@ -63,6 +64,7 @@ namespace LatvianSneakers.Controllers
             return CreatedAtRoute(nameof(GetBannerById), new { Id = bannerReadDto.Id }, bannerReadDto); //Return 201
         }
 
+        [Authorize]
         [HttpPut("{id}")]
         //[Authorize(Roles = "Координатор ПСР")]
 
@@ -82,6 +84,7 @@ namespace LatvianSneakers.Controllers
         }
 
         //[Authorize(Roles = "Координатор ПСР")]
+        [Authorize]
         [HttpDelete("{id}")]
         public ActionResult Delete(int id)
         {

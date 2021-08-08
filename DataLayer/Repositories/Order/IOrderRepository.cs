@@ -8,7 +8,7 @@ namespace DataLayer.Repositories
     public interface IOrderRepository
     {
         bool SaveChanges();
-        IEnumerable<Order> Get();
+        IEnumerable<Order> Get(int? Id = null);
         Order GetById(int id);
         Order GetWithImgsById(int id);
         void Create(Order order);

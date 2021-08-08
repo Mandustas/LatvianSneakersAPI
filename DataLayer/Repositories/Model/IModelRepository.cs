@@ -8,7 +8,7 @@ namespace DataLayer.Repositories
     public interface IModelRepository
     {
         bool SaveChanges();
-        IEnumerable<Model> Get();
+        IEnumerable<Model> Get(int? BrandId = null);
         Model GetById(int id);
         void Create(Model model);
         void Delete(Model model);

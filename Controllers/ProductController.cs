@@ -1,6 +1,7 @@
 ﻿using DataLayer.DTOs;
 using DataLayer.Models;
 using DataLayer.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -73,6 +74,7 @@ namespace LatvianSneakers.Controllers
         }
 
         //[Authorize(Roles = "Координатор ПСР")]
+        [Authorize]
         [HttpPost]
         public ActionResult<ProductCreateDTO> Create(ProductCreateDTO productCreateDTO)
         {
@@ -115,6 +117,7 @@ namespace LatvianSneakers.Controllers
             return NoContent();
         }
 
+        [Authorize]
         [HttpPut("{id}")]
         //[Authorize(Roles = "Координатор ПСР")]
 
@@ -165,6 +168,7 @@ namespace LatvianSneakers.Controllers
         }
 
         ////[Authorize(Roles = "Координатор ПСР")]
+        [Authorize]
         [HttpDelete("{id}")]
         public ActionResult Delete(int id)
         {
