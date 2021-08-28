@@ -57,6 +57,8 @@ namespace LatvianSneakers
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "LatvianSneakers", Version = "v1" });
             });
+            var authOptionsConfiguration = Configuration.GetSection("Auth");
+
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped<ISizeRepository, SizeRepository>();
             services.AddScoped<IBrandRepository, BrandRepository>();
@@ -64,6 +66,7 @@ namespace LatvianSneakers
             services.AddScoped<IModelRepository, ModelRepository>();
             services.AddScoped<IReviewRepository, ReviewRepository>();
             services.AddScoped<IOrderRepository, OrderRepository>();
+            services.Configure<AuthOptions.AuthOptions>(authOptionsConfiguration);
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 

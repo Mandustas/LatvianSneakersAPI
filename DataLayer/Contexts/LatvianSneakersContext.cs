@@ -22,6 +22,7 @@ namespace DataLayer.Contexts
         public DbSet<ProductSize> ProductSizes { get; set; }
         public DbSet<Review> Reviews { get; set; }
         public DbSet<Size> Sizes { get; set; }
+        public DbSet<Lang> Langs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -29,6 +30,13 @@ namespace DataLayer.Contexts
             //  .HasKey(e => new { e.ProductId, e.SizeId });
 
 
+            modelBuilder.Entity<Banner>(
+                entity =>
+                {
+                    entity.HasOne(d => d.Lang)
+                        .WithMany(p => p.Banners)
+                        .HasForeignKey("LangId");
+                });
             modelBuilder.Entity<Image>(
                 entity =>
                 {
@@ -104,7 +112,6 @@ namespace DataLayer.Contexts
                     new Size { Id = 10, Value="EUR 45"},
                     new Size { Id = 11, Value="EUR 46"},
                     new Size { Id = 12, Value="EUR 47"},
-                    new Size { Id = 13, Value="EUR 48"},
                 });
             modelBuilder.Entity<Review>().HasData(
                 new Review[]
@@ -193,10 +200,17 @@ namespace DataLayer.Contexts
             modelBuilder.Entity<Banner>().HasData(
                 new Banner[]
                 {
-                    new Banner { Id = 1, Path="https://sun2.megafon-nn.userapi.com/impg/I1FMk1QP3-5AKjE2tIz7WXpzAP7CFf2dRPpadg/tKy87HiLsCQ.jpg?size=825x350&quality=96&sign=4c339bff3d2c2a57d5d1c18bc0fff836&type=album", Order=3},
-                    new Banner { Id = 2, Path="https://sun9-76.userapi.com/impg/rHgrE4QUq72s_vr2iG44Ds6Y5uK6ZpUrFEVg-A/a8FZaxsEnwg.jpg?size=825x350&quality=96&sign=214e12be2bea072d961169a42b1d5022&type=album", Order=2},
-                    new Banner { Id = 3, Path="https://sun9-31.userapi.com/impg/nNE3Z4Dn-r3--b7G4sZqNvwSU5jzBxNNxg_XJA/WkIwtqBE9r0.jpg?size=825x350&quality=96&sign=e9b0d055db91b7936f364e62da99b569&type=album", Order=1},
+                    new Banner { Id = 1, Path="https://sun2.megafon-nn.userapi.com/impg/I1FMk1QP3-5AKjE2tIz7WXpzAP7CFf2dRPpadg/tKy87HiLsCQ.jpg?size=825x350&quality=96&sign=4c339bff3d2c2a57d5d1c18bc0fff836&type=album", Order=3, LangId=1},
+                    new Banner { Id = 2, Path="https://sun9-76.userapi.com/impg/rHgrE4QUq72s_vr2iG44Ds6Y5uK6ZpUrFEVg-A/a8FZaxsEnwg.jpg?size=825x350&quality=96&sign=214e12be2bea072d961169a42b1d5022&type=album", Order=2, LangId=1},
+                    new Banner { Id = 3, Path="https://sun9-31.userapi.com/impg/nNE3Z4Dn-r3--b7G4sZqNvwSU5jzBxNNxg_XJA/WkIwtqBE9r0.jpg?size=825x350&quality=96&sign=e9b0d055db91b7936f364e62da99b569&type=album", Order=1, LangId=1},
+                });
 
+            modelBuilder.Entity<Lang>().HasData(
+                new Lang[]
+                {
+                    new Lang { Id = 1, Title="en"},
+                    new Lang { Id = 2, Title="ru"},
+                    new Lang { Id = 3, Title="lv"},
                 });
         }
     }

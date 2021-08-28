@@ -8,5 +8,7 @@ namespace DataLayer.DTOs
     {
         public string Path { get; set; }
         public int Order { get; set; }
+        public int LangId { get; set; }
+
     }
 }

@@ -10,15 +10,15 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataLayer.Migrations
 {
     [DbContext(typeof(LatvianSneakersContext))]
-    [Migration("20210702115446_init")]
-    partial class init
+    [Migration("20210828203617_add_lang")]
+    partial class add_lang
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("ProductVersion", "5.0.7")
+                .HasAnnotation("ProductVersion", "5.0.8")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
             modelBuilder.Entity("DataLayer.Models.Banner", b =>
@@ -28,6 +28,9 @@ namespace DataLayer.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<int>("LangId")
+                        .HasColumnType("int");
+
                     b.Property<int>("Order")
                         .HasColumnType("int");
 
@@ -36,24 +39,29 @@ namespace DataLayer.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("LangId");
+
                     b.ToTable("Banners");
 
                     b.HasData(
                         new
                         {
                             Id = 1,
+                            LangId = 1,
                             Order = 3,
                             Path = "https://sun2.megafon-nn.userapi.com/impg/I1FMk1QP3-5AKjE2tIz7WXpzAP7CFf2dRPpadg/tKy87HiLsCQ.jpg?size=825x350&quality=96&sign=4c339bff3d2c2a57d5d1c18bc0fff836&type=album"
                         },
                         new
                         {
                             Id = 2,
+                            LangId = 1,
                             Order = 2,
                             Path = "https://sun9-76.userapi.com/impg/rHgrE4QUq72s_vr2iG44Ds6Y5uK6ZpUrFEVg-A/a8FZaxsEnwg.jpg?size=825x350&quality=96&sign=214e12be2bea072d961169a42b1d5022&type=album"
                         },
                         new
                         {
                             Id = 3,
+                            LangId = 1,
                             Order = 1,
                             Path = "https://sun9-31.userapi.com/impg/nNE3Z4Dn-r3--b7G4sZqNvwSU5jzBxNNxg_XJA/WkIwtqBE9r0.jpg?size=825x350&quality=96&sign=e9b0d055db91b7936f364e62da99b569&type=album"
                         });
@@ -214,6 +222,38 @@ namespace DataLayer.Migrations
                             IsVideo = false,
                             OrderId = 2,
                             Path = "https://sun9-54.userapi.com/impg/JLpJr7cUWS6bCnNVYCW3SprZuCgPg1RTXiXhAg/V0Y-Nv518mY.jpg?size=255x255&quality=96&sign=6f2419d7cbde4448f6d47875e431d918&type=album"
+                        });
+                });
+
+            modelBuilder.Entity("DataLayer.Models.Lang", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Title")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Langs");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Title = "en"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Title = "ru"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Title = "lv"
                         });
                 });
 
@@ -573,6 +613,17 @@ namespace DataLayer.Migrations
                         });
                 });
 
+            modelBuilder.Entity("DataLayer.Models.Banner", b =>
+                {
+                    b.HasOne("DataLayer.Models.Lang", "Lang")
+                        .WithMany("Banners")
+                        .HasForeignKey("LangId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Lang");
+                });
+
             modelBuilder.Entity("DataLayer.Models.Image", b =>
                 {
                     b.HasOne("DataLayer.Models.Product", "Product")
@@ -649,6 +700,11 @@ namespace DataLayer.Migrations
                     b.Navigation("Models");
 
                     b.Navigation("Products");
+                });
+
+            modelBuilder.Entity("DataLayer.Models.Lang", b =>
+                {
+                    b.Navigation("Banners");
                 });
 
             modelBuilder.Entity("DataLayer.Models.Model", b =>

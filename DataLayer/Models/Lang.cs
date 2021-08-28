@@ -5,13 +5,12 @@ using System.Text;
 
 namespace DataLayer.Models
 {
-    public class Banner
+    public class Lang
     {
         [Key]
         public int Id { get; set; }
-        public string Path { get; set; }
-        public int Order { get; set; }
-        public int LangId { get; set; }
-        public Lang Lang { get; set; }
+        public string Title { get; set; }
+        public IEnumerable<Banner> Banners { get; set; }
+
     }
 }

@@ -3,24 +3,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace DataLayer.Migrations
 {
-    public partial class init : Migration
+    public partial class add_lang : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
-                name: "Banners",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Path = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Order = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Banners", x => x.Id);
-                });
-
             migrationBuilder.CreateTable(
                 name: "Brands",
                 columns: table => new
@@ -32,6 +18,19 @@ namespace DataLayer.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Brands", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Langs",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Langs", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -90,6 +89,27 @@ namespace DataLayer.Migrations
                         principalTable: "Brands",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Banners",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Path = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Order = table.Column<int>(type: "int", nullable: false),
+                    LangId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Banners", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Banners_Langs_LangId",
+                        column: x => x.LangId,
+                        principalTable: "Langs",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -191,22 +211,22 @@ namespace DataLayer.Migrations
                 });
 
             migrationBuilder.InsertData(
-                table: "Banners",
-                columns: new[] { "Id", "Order", "Path" },
-                values: new object[,]
-                {
-                    { 1, 3, "https://sun2.megafon-nn.userapi.com/impg/I1FMk1QP3-5AKjE2tIz7WXpzAP7CFf2dRPpadg/tKy87HiLsCQ.jpg?size=825x350&quality=96&sign=4c339bff3d2c2a57d5d1c18bc0fff836&type=album" },
-                    { 2, 2, "https://sun9-76.userapi.com/impg/rHgrE4QUq72s_vr2iG44Ds6Y5uK6ZpUrFEVg-A/a8FZaxsEnwg.jpg?size=825x350&quality=96&sign=214e12be2bea072d961169a42b1d5022&type=album" },
-                    { 3, 1, "https://sun9-31.userapi.com/impg/nNE3Z4Dn-r3--b7G4sZqNvwSU5jzBxNNxg_XJA/WkIwtqBE9r0.jpg?size=825x350&quality=96&sign=e9b0d055db91b7936f364e62da99b569&type=album" }
-                });
-
-            migrationBuilder.InsertData(
                 table: "Brands",
                 columns: new[] { "Id", "Title" },
                 values: new object[,]
                 {
                     { 1, "Nike" },
                     { 2, "Adidas" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Langs",
+                columns: new[] { "Id", "Title" },
+                values: new object[,]
+                {
+                    { 1, "en" },
+                    { 2, "ru" },
+                    { 3, "lv" }
                 });
 
             migrationBuilder.InsertData(
@@ -245,6 +265,16 @@ namespace DataLayer.Migrations
                     { 1, "EUR 36" },
                     { 6, "EUR 41" },
                     { 13, "EUR 48" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Banners",
+                columns: new[] { "Id", "LangId", "Order", "Path" },
+                values: new object[,]
+                {
+                    { 1, 1, 3, "https://sun2.megafon-nn.userapi.com/impg/I1FMk1QP3-5AKjE2tIz7WXpzAP7CFf2dRPpadg/tKy87HiLsCQ.jpg?size=825x350&quality=96&sign=4c339bff3d2c2a57d5d1c18bc0fff836&type=album" },
+                    { 2, 1, 2, "https://sun9-76.userapi.com/impg/rHgrE4QUq72s_vr2iG44Ds6Y5uK6ZpUrFEVg-A/a8FZaxsEnwg.jpg?size=825x350&quality=96&sign=214e12be2bea072d961169a42b1d5022&type=album" },
+                    { 3, 1, 1, "https://sun9-31.userapi.com/impg/nNE3Z4Dn-r3--b7G4sZqNvwSU5jzBxNNxg_XJA/WkIwtqBE9r0.jpg?size=825x350&quality=96&sign=e9b0d055db91b7936f364e62da99b569&type=album" }
                 });
 
             migrationBuilder.InsertData(
@@ -317,6 +347,11 @@ namespace DataLayer.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Banners_LangId",
+                table: "Banners",
+                column: "LangId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Images_ProductId",
                 table: "Images",
                 column: "ProductId");
@@ -363,6 +398,9 @@ namespace DataLayer.Migrations
 
             migrationBuilder.DropTable(
                 name: "Reviews");
+
+            migrationBuilder.DropTable(
+                name: "Langs");
 
             migrationBuilder.DropTable(
                 name: "Orders");
